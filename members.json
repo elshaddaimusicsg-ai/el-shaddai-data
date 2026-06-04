@@ -1,7 +1,8 @@
 [
   {
     "name": "Alex Alejandro",
-    "isAdmin": false
+    "isAdmin": false,
+    "password": "test1234"
   },
   {
     "name": "Emerson Paras",
