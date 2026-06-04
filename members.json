@@ -63,6 +63,11 @@
     "password": "test1234"
   },
   {
+    "name": "Richelle Padrigano",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Takayuki Yamaksaki",
     "isAdmin": false
   },
