@@ -78,6 +78,11 @@
     "password": "test1234"
   },
   {
+    "name": "Stephen Granada",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Takayuki Yamaksaki",
     "isAdmin": false
   },
