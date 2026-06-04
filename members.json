@@ -10,7 +10,8 @@
   },
   {
     "name": "Jeffrey Prado",
-    "isAdmin": true
+    "isAdmin": true,
+    "password": "test1234"
   },
   {
     "name": "Jemar Corpuz",
