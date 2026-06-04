@@ -74,7 +74,7 @@
   },
   {
     "name": "Paulo Padrigano",
-    "isAdmin": false,
+    "isAdmin": true,
     "password": "test1234"
   },
   {
