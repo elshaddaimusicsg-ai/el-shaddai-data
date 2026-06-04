@@ -24,6 +24,11 @@
     "isAdmin": false
   },
   {
+    "name": "Emily Vivit",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Emmanuel Mailum",
     "isAdmin": false,
     "password": "test1234"
