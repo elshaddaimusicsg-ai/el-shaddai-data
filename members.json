@@ -89,7 +89,7 @@
   },
   {
     "name": "Takayuki Yamasaki",
-    "isAdmin": false,
+    "isAdmin": true,
     "password": "test1234"
   },
   {
