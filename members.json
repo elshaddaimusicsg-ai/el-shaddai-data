@@ -88,10 +88,6 @@
     "password": "test1234"
   },
   {
-    "name": "Takayuki Yamaksaki",
-    "isAdmin": true
-  },
-  {
     "name": "Teresa Bagoyo",
     "isAdmin": false,
     "password": "test1234"
