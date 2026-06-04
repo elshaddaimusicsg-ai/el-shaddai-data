@@ -1,5 +1,9 @@
 [
   {
+    "name": "Alex Alejandro",
+    "isAdmin": false
+  },
+  {
     "name": "Jeffrey Prado",
     "isAdmin": true
   }
