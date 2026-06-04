@@ -29,6 +29,11 @@
     "password": "test1234"
   },
   {
+    "name": "Ferdinand San Juan",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Hilario Gianan",
     "isAdmin": false,
     "password": "test1234"
