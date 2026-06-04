@@ -18,6 +18,11 @@
     "isAdmin": false
   },
   {
+    "name": "Joie Fajardo",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Takayuki Yamaksaki",
     "isAdmin": false
   },
