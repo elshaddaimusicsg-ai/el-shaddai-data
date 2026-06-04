@@ -20,5 +20,10 @@
   {
     "name": "Takayuki Yamaksaki",
     "isAdmin": false
+  },
+  {
+    "name": "Teresa Bagoyo",
+    "isAdmin": false,
+    "password": "test1234"
   }
 ]
