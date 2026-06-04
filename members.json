@@ -5,6 +5,11 @@
     "password": "test1234"
   },
   {
+    "name": "Caroline Mailum",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Cyrus Granada",
     "isAdmin": false,
     "password": "test1234"
