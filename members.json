@@ -98,7 +98,7 @@
   },
   {
     "name": "Virgie San Juan",
-    "isAdmin": false,
+    "isAdmin": true,
     "password": "test1234"
   }
 ]
