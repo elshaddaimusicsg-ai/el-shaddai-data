@@ -8,3 +8,5 @@ const DEFAULT_TOKEN=""; // Paste your GitHub token here
 const DEFAULT_TOKEN="ghp_yourtoken here";
 
 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
+
+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
