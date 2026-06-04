@@ -6,5 +6,9 @@
   {
     "name": "Jeffrey Prado",
     "isAdmin": true
+  },
+  {
+    "name": "Jemar Corpuz",
+    "isAdmin": false
   }
 ]
