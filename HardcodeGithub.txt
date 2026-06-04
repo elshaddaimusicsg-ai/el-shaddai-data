@@ -6,3 +6,6 @@ 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
 const DEFAULT_TOKEN=""; // Paste your GitHub token here
 
 const DEFAULT_TOKEN="ghp_yourtoken here";
+
+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
+
