@@ -14,5 +14,9 @@
   {
     "name": "Jemar Corpuz",
     "isAdmin": false
+  },
+  {
+    "name": "Takayuki Yamaksaki",
+    "isAdmin": false
   }
 ]
