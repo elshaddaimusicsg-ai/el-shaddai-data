@@ -1,5 +1,10 @@
 [
   {
+    "name": "Aldwin Manalo",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Alex Alejandro",
     "isAdmin": false,
     "password": "test1234"
