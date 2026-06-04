@@ -4,6 +4,10 @@
     "isAdmin": false
   },
   {
+    "name": "Emerson Paras",
+    "isAdmin": false
+  },
+  {
     "name": "Jeffrey Prado",
     "isAdmin": true
   },
