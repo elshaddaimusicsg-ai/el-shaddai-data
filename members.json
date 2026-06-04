@@ -53,6 +53,11 @@
     "password": "test1234"
   },
   {
+    "name": "Lanie Codino",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Paulo Padrigano",
     "isAdmin": false,
     "password": "test1234"
