@@ -9,6 +9,11 @@
     "isAdmin": false
   },
   {
+    "name": "Jeanette Ferrer",
+    "isAdmin": false,
+    "password": "test1234"
+  },
+  {
     "name": "Jeffrey Prado",
     "isAdmin": true,
     "password": "test1234"
