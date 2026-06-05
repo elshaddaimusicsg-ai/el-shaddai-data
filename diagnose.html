@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Diagnose</title>
+<style>
+body{background:#1a1a2e;color:#f4f1eb;font-family:Georgia,serif;padding:20px;max-width:500px;margin:0 auto}
+.result{margin:8px 0;padding:10px;border-radius:6px;font-size:12px;line-height:1.6;word-break:break-all}
+.ok{background:#56cf8c22;border:1px solid #56cf8c44;color:#56cf8c}
+.fail{background:#ff707022;border:1px solid #ff707044;color:#ffaaaa}
+.info{background:#c8a95a18;border:1px solid #c8a95a44;color:#c8a95a}
+button{width:100%;padding:12px;background:#c8a95a;border:none;border-radius:8px;color:#1a1a2e;font-weight:bold;font-size:14px;cursor:pointer;margin-top:10px;font-family:Georgia,serif}
+h2{color:#c8a95a;margin-bottom:16px}
+pre{white-space:pre-wrap;font-size:11px;margin-top:6px;color:#f4f1eb99}
+</style>
+</head>
+<body>
+<h2>🔍 GitHub Diagnostics</h2>
+<div id="out"></div>
+<button onclick="runTests()">▶ RUN TESTS</button>
+
+<script>
+const REPO="elshaddaimusicsg-ai/el-shaddai-data";
+const RAW="https://raw.githubusercontent.com/"+REPO+"/main/";
+const API="https://api.github.com/repos/"+REPO+"/contents/";
+
+function log(msg,type,detail){
+  const d=document.getElementById("out");
+  d.innerHTML+=`<div class="result ${type}"><strong>${msg}</strong>${detail?`<pre>${detail}</pre>`:""}</div>`;
+}
+
+async function test(label,url,opts){
+  try{
+    const r=await fetch(url,opts||{cache:"no-store"});
+    const text=await r.text();
+    if(r.ok){
+      log("✓ "+label+" ("+r.status+")", "ok", text.slice(0,200));
+      return{ok:true,text,status:r.status};
+    }else{
+      log("✗ "+label+" ("+r.status+")", "fail", text.slice(0,200));
+      return{ok:false,text,status:r.status};
+    }
+  }catch(e){
+    log("✗ "+label+" — "+e.message, "fail");
+    return{ok:false,error:e.message};
+  }
+}
+
+async function runTests(){
+  document.getElementById("out").innerHTML="";
+  log("Testing repo: "+REPO, "info");
+
+  // Test 1: raw config.json
+  const cfg=await test("RAW config.json", RAW+"config.json");
+  let token="";
+  if(cfg.ok){
+    try{
+      const j=JSON.parse(cfg.text);
+      token=j.token||"";
+      if(token)log("✓ Token found: "+token.slice(0,8)+"...", "ok");
+      else log("✗ config.json has no 'token' field", "fail", JSON.stringify(j));
+    }catch(e){log("✗ config.json is not valid JSON: "+e.message, "fail", cfg.text.slice(0,100));}
+  }
+
+  // Test 2: raw members.json
+  await test("RAW members.json", RAW+"members.json");
+
+  // Test 3: API members.json with token
+  if(token){
+    await test("API members.json (with token)", API+"members.json", {
+      headers:{"Authorization":"Bearer "+token,"Accept":"application/vnd.github+json"},
+      cache:"no-store"
+    });
+  }else{
+    log("⚠ Skipping API test — no token found", "info");
+  }
+
+  // Test 4: raw attendance.json
+  await test("RAW attendance.json", RAW+"attendance.json");
+
+  log("Tests complete. Share these results to diagnose the issue.", "info");
+}
+</script>
+</body>
+</html>
