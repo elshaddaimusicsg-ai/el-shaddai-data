@@ -598,6 +598,14 @@ function buildApp(){
           return `<svg width="100%" viewBox="0 0 ${svgW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible">${bars}</svg>`;
         })()}
       </div>
+      <div class="card" style="margin-top:12px">
+        <p style="margin:0 0 10px;font-size:11px;color:${ACCENT};letter-spacing:1px">MEMBER ATTENDANCE</p>
+        ${mn.map(name=>{const p=!!cRec[name];return`
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:8px;margin-bottom:6px;background:${p?GREEN+"22":RED+"18"};border:1px solid ${p?GREEN+"55":RED+"44"}">
+          <span style="font-size:13px;color:${p?GREEN:RED};font-weight:bold">${esc(name)}</span>
+          <span style="color:${p?GREEN:RED};background:${p?GREEN:RED}33;border:1px solid ${p?GREEN:RED}66;border-radius:4px;padding:3px 10px;font-size:11px;font-weight:bold">${p?"✓ PRESENT":"✗ ABSENT"}</span>
+        </div>`;}).join("")}
+      </div>
       ${servicesOnDate.length>1?`
       <div class="card" style="margin-top:12px">
         <p style="margin:0 0 12px;font-size:11px;color:${ACCENT};letter-spacing:1px">ATTENDANCE BY SERVICE TYPE</p>
