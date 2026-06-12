@@ -336,34 +336,6 @@ async function doSetupBiometric(){
 }
 
 
-  if(!bioSupported()){alert("WebAuthn not supported on this browser.");return;}
-  if(!S.loggedIn){alert("Please sign in first.");return;}
-  const member=S.loggedIn;
-  const userId=new TextEncoder().encode(member.name);
-  const challenge=crypto.getRandomValues(new Uint8Array(32));
-  try{
-    const cred=await navigator.credentials.create({publicKey:{
-      challenge,
-      rp:{id:RPID,name:RPNAME},
-      user:{id:userId,name:member.name,displayName:member.name},
-      pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
-      authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},
-      timeout:60000,
-      attestation:"none"
-    }});
-    // Store credentialId in localStorage keyed by member name
-    const stored=JSON.parse(localStorage.getItem("bio_creds")||"{}");
-    stored[member.name]=b64url(cred.rawId);
-    localStorage.setItem("bio_creds",JSON.stringify(stored));
-    S.biometricError="";
-    alert("✅ Biometric registered! Next time you open the app, it will prompt Face ID / fingerprint automatically.");
-    render();
-  }catch(e){
-    if(e.name==="NotAllowedError")alert("Biometric registration cancelled.");
-    else alert("Registration failed: "+e.message);
-  }
-}
-
 async function doRemoveBiometric(){
   if(!S.loggedIn)return;
   const stored=JSON.parse(localStorage.getItem("bio_creds")||"{}");
