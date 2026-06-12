@@ -299,6 +299,8 @@ async function doBiometricLogin(silent=false){
   }
 }
 
+function clearBioAndRender(){localStorage.removeItem("bio_creds");S.biometricError="";render();}
+
 async function doSetupBiometric(){
   // Get name and password from the login form first
   const name=(document.getElementById("loginName")||{}).value||"";
@@ -450,7 +452,7 @@ function buildApp(){
         </button>
         ${S.biometricError?`<p style="color:${RED};font-size:12px;margin-bottom:10px">${esc(S.biometricError)}</p>`:""}
         <p style="font-size:11px;color:${LIGHT}44;text-align:center;margin:0">
-          <a href="#" onclick="(function(){localStorage.removeItem('bio_creds');render();})()" style="color:${ACCENT}88;font-size:11px">Sign in with password instead</a>
+          <a href="#" onclick="clearBioAndRender()" style="color:${ACCENT}88;font-size:11px">Sign in with password instead</a>
         </p>`:`
         <p style="font-size:13px;color:${ACCENT};letter-spacing:1px;margin-bottom:6px">SIGN IN</p>
         <label class="label">YOUR NAME</label><input class="input" id="loginName" placeholder="e.g. Juan dela Cruz"/>
