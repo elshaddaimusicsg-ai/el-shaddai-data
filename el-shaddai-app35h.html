@@ -299,7 +299,41 @@ async function doBiometricLogin(silent=false){
   }
 }
 
-async function doRegisterBiometric(){
+async function doSetupBiometric(){
+  // Get name and password from the login form first
+  const name=(document.getElementById("loginName")||{}).value||"";
+  const pw=(document.getElementById("loginPw")||{}).value||"";
+  if(!name||!pw){S.loginError="Please enter your name and password to set up biometrics.";render();return;}
+  // Validate credentials
+  const found=S.members.find(m=>m.name.toLowerCase()===name.toLowerCase()&&m.password===pw);
+  if(!found){S.loginError="Incorrect name or password.";render();return;}
+  // Credentials valid — now register biometric
+  S.loginError="";
+  const userId=new TextEncoder().encode(found.name);
+  const challenge=crypto.getRandomValues(new Uint8Array(32));
+  try{
+    const cred=await navigator.credentials.create({publicKey:{
+      challenge,
+      rp:{id:RPID,name:RPNAME},
+      user:{id:userId,name:found.name,displayName:found.name},
+      pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:"platform",userVerification:"required",residentKey:"preferred"},
+      timeout:60000,attestation:"none"
+    }});
+    const stored=JSON.parse(localStorage.getItem("bio_creds")||"{}");
+    stored[found.name]=b64url(cred.rawId);
+    localStorage.setItem("bio_creds",JSON.stringify(stored));
+    // Sign them in automatically after registering
+    S.loggedIn=found;S.loginError="";S.biometricError="";S.page="take";
+    render();resetIdleTimer();setTimeout(checkGps,300);
+  }catch(e){
+    if(e.name==="NotAllowedError")S.loginError="Biometric setup cancelled.";
+    else S.loginError="Biometric setup failed: "+e.message;
+    render();
+  }
+}
+
+
   if(!bioSupported()){alert("WebAuthn not supported on this browser.");return;}
   if(!S.loggedIn){alert("Please sign in first.");return;}
   const member=S.loggedIn;
@@ -409,22 +443,30 @@ function buildApp(){
   return hdr(false)+`
     <div style="max-width:400px;margin:0 auto;padding:32px 20px">
       <div class="card" style="border-color:${ACCENT}44;padding:24px">
-        <p style="font-size:13px;color:${ACCENT};letter-spacing:1px;margin-bottom:6px">SIGN IN</p>
-        <p style="font-size:13px;color:${LIGHT}99;margin-bottom:18px">Enter your name and password.</p>
         ${anyBioRegistered?`
-        <button class="btn btn-gold" style="margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="doBiometricLogin(false)">
-          <span style="font-size:18px">🔐</span> SIGN IN WITH BIOMETRIC
+        <p style="font-size:13px;color:${ACCENT};letter-spacing:1px;margin-bottom:6px">SIGN IN</p>
+        <button class="btn btn-gold" style="margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px" onclick="doBiometricLogin(false)">
+          <span style="font-size:18px">🔐</span> SIGN IN WITH BIOMETRICS
         </button>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-          <div style="flex:1;height:1px;background:${ACCENT}33"></div>
-          <span style="font-size:11px;color:${LIGHT}55">or use password</span>
-          <div style="flex:1;height:1px;background:${ACCENT}33"></div>
-        </div>`:""}
+        ${S.biometricError?`<p style="color:${RED};font-size:12px;margin-bottom:10px">${esc(S.biometricError)}</p>`:""}
+        <p style="font-size:11px;color:${LIGHT}44;text-align:center;margin:0">
+          <a href="#" onclick="(function(){localStorage.removeItem('bio_creds');render();})()" style="color:${ACCENT}88;font-size:11px">Sign in with password instead</a>
+        </p>`:`
+        <p style="font-size:13px;color:${ACCENT};letter-spacing:1px;margin-bottom:6px">SIGN IN</p>
         <label class="label">YOUR NAME</label><input class="input" id="loginName" placeholder="e.g. Juan dela Cruz"/>
         <label class="label">PASSWORD</label><input class="input" type="password" id="loginPw" placeholder="Enter your password"/>
         ${S.loginError?`<p style="color:${RED};font-size:12px;margin-top:6px">${esc(S.loginError)}</p>`:""}
-        ${S.biometricError?`<p style="color:${RED};font-size:12px;margin-top:6px">${esc(S.biometricError)}</p>`:""}
-        <button class="btn btn-gold" style="margin-top:14px" onclick="doLogin()">SIGN IN WITH PASSWORD</button>
+        <button class="btn btn-gold" style="margin-top:14px" onclick="doLogin()">SIGN IN</button>
+        ${bioSupported()?`
+        <div style="display:flex;align-items:center;gap:8px;margin:14px 0 10px">
+          <div style="flex:1;height:1px;background:${ACCENT}33"></div>
+          <span style="font-size:11px;color:${LIGHT}44">or</span>
+          <div style="flex:1;height:1px;background:${ACCENT}33"></div>
+        </div>
+        <button class="btn" style="border:1px solid ${ACCENT}55;color:${ACCENT};background:transparent;display:flex;align-items:center;justify-content:center;gap:8px" onclick="doSetupBiometric()">
+          🔐 Set up Biometric Login
+        </button>`:""}
+        `}
       </div>
     </div>`;}
 
@@ -653,14 +695,6 @@ function buildApp(){
         <button class="btn ${S.changePwOk?"":"btn-gold"}" style="${S.changePwOk?"background:#2d6a4f;color:#fff":""}" onclick="doChangePw()">
           ${S.changePwOk?"✓ PASSWORD CHANGED!":"CHANGE PASSWORD"}
         </button>
-      </div>
-      <div style="background:#1a1a2e;border:1px solid ${ACCENT}44;border-radius:10px;padding:16px;margin-top:12px">
-        <p style="margin:0 0 6px;font-size:12px;color:${ACCENT};letter-spacing:1px">🔐 BIOMETRIC LOGIN</p>
-        <p style="font-size:12px;color:${LIGHT}77;margin:0 0 12px">Set up Face ID, Touch ID or fingerprint on <strong style="color:${LIGHT}bb">this device</strong> for quick sign-in. Once registered, a biometric button will appear on the login screen.</p>
-        ${(()=>{const stored=JSON.parse(localStorage.getItem("bio_creds")||"{}");const has=!!stored[S.loggedIn.name];return has
-          ?`<p style="font-size:12px;color:#56cf8c;margin:0 0 10px">✅ Biometric registered on this device</p>
-             <button class="btn" style="background:${RED}22;border:1px solid ${RED}44;color:${RED}" onclick="doRemoveBiometric()">🗑 REMOVE BIOMETRIC</button>`
-          :`<button class="btn btn-gold" onclick="doRegisterBiometric()">＋ REGISTER BIOMETRIC ON THIS DEVICE</button>`;})()}
       </div>
       ${isAdmin?`<div style="background:#1a2a1a;border:1px solid #56cf8c33;border-radius:10px;padding:16px">
         <p style="margin:0 0 10px;font-size:12px;color:${GREEN};letter-spacing:1px">📦 JSONBIN CONNECTION</p>
