@@ -585,7 +585,7 @@ function buildApp(){
         <p style="font-size:11px;letter-spacing:2px;color:${ACCENT}cc;margin:0">ANALYTICS</p>
         <div style="display:flex;gap:8px">
           <button onclick="refreshData()" style="background:none;border:1px solid ${ACCENT}44;color:${ACCENT};border-radius:6px;padding:5px 10px;font-size:11px;cursor:pointer;font-family:Georgia,serif">↺ Refresh</button>
-          <button onclick="exportChartsPdf()" style="background:${ACCENT};border:none;color:#1a1a2e;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Georgia,serif">⬇ Export PDF</button>
+          ${isAdmin?`<button onclick="exportChartsPdf()" style="background:${ACCENT};border:none;color:#1a1a2e;border-radius:6px;padding:5px 10px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Georgia,serif">⬇ Export PDF</button>`:""}
         </div>
       </div>
       <p style="font-size:12px;color:${LIGHT}66;margin-bottom:10px">${fmtDate(S.selectedDate)}</p>
@@ -968,6 +968,7 @@ function loadHeavyCharts(){
 }
 
 async function exportChartsPdf(){
+  if(!S.loggedIn||!S.loggedIn.isAdmin)return;
   // Ensure grid & heatmap are loaded
   const heavyDiv=document.getElementById("heavyCharts");
   if(heavyDiv&&heavyDiv.innerHTML.trim()===""){
